@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriScan India 🍽️</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        /* Modernized results look */
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        .nutri-item {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+        }
+        .nutri-item strong {
+            font-size: 11px;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .nutri-item span {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3436;
+        }
+        .benefits-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #eef2ff 0%, #f3f0ff 100%);
+            border-radius: 12px;
+            text-align: left;
+            border-left: 5px solid #764ba2;
+        }
+        #preview-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        hr {
+            border: 0;
+            border-top: 1px solid #eee;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>NutriScan India 🍴</h1>
+        <p>Identify Indian dishes & check nutrition</p>
+
+        <form id="upload-form">
+            <div class="file-input-wrapper">
+                <input type="file" id="image-input" name="file" accept="image/*" required>
+            </div>
+            <button type="submit" id="submit-btn">Scan Food</button>
+        </form>
+
+        <div class="preview">
+            <img id="preview-image" src="" alt="Preview" style="display:none;">
+        </div>
+
+        <div id="loader" style="display: none; margin-top: 20px; font-weight: bold; color: #764ba2;">
+            Analyzing Plate... 🥗
+        </div>
+
+        <div class="result" id="result-box" style="display:none;">
+            <h2 id="food-name" style="color: #2d3436; margin-bottom: 5px; font-size: 28px;"></h2>
+            <p id="confidence-score" style="font-size: 14px; color: #636e72; margin-bottom: 10px;"></p>
+            
+            <hr>
+
+            <div class="nutrition-grid">
+                <div class="nutri-item">
+                    <strong>Calories</strong>
+                    <span id="nutri-cal">--</span>
+                </div>
+                <div class="nutri-item">
+                    <strong>Protein</strong>
+                    <span id="nutri-prot">--</span>
+                </div>
+                <div class="nutri-item">
+                    <strong>Carbs</strong>
+                    <span id="nutri-carb">--</span>
+                </div>
+                <div class="nutri-item">
+                    <strong>Fats</strong>
+                    <span id="nutri-fats">--</span>
+                </div>
+            </div>
+
+            <div class="benefits-box">
+                <strong style="color: #764ba2; font-size: 14px;">Nutrition Insight:</strong>
+                <p id="nutri-benefits" style="margin-top: 5px; color: #2d3436; line-height: 1.4;"></p>
+            </div>
+            
+            <button onclick="location.reload()" style="background: #636e72; margin-top: 20px; font-size: 14px; padding: 10px;">Scan New Dish</button>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById("upload-form");
+        const btn = document.getElementById("submit-btn");
+        const loader = document.getElementById("loader");
+        const resultBox = document.getElementById("result-box");
+
+        form.addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const fileInput = document.getElementById("image-input");
+            const file = fileInput.files[0];
+
+            if (!file) return;
+
+            // UI Feedback
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+            loader.style.display = "block";
+            resultBox.style.display = "none";
+
+            // Preview logic
+            const preview = document.getElementById("preview-image");
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await fetch("/predict", { method: "POST", body: formData });
+                const data = await response.json();
+
+                if (data.error) {
+                    alert("Error: " + data.error);
+                } else {
+                    resultBox.style.display = "block";
+                    
+                    // Main Identification
+                    document.getElementById("food-name").innerText = data.class_name;
+                    document.getElementById("confidence-score").innerText = "Match Confidence: " + data.confidence + "%";
+                    
+                    // Specific Nutritional Fields + Units
+                    const n = data.nutrition;
+                    document.getElementById("nutri-cal").innerText = n.calories + (n.calories !== "N/A" ? " kcal" : "");
+                    document.getElementById("nutri-prot").innerText = n.protein;
+                    document.getElementById("nutri-carb").innerText = n.carbs;
+                    document.getElementById("nutri-fats").innerText = n.fats;
+                    document.getElementById("nutri-benefits").innerText = n.benefits;
+
+                    // Scroll to result
+                    resultBox.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Server Connection Error. Restart app.py!");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Scan Food";
+                loader.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
