@@ -18,6 +18,7 @@ Clean and responsive UI
 
 Organized project structure
 
+
 🛠️ Technologies Used
 
 Python
