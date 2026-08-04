@@ -4,6 +4,7 @@ NutriScan India is an AI-powered web application that classifies Indian food ima
 
 This project demonstrates the practical implementation of Computer Vision and Deep Learning integrated with Web Development to create a real-world AI application.
 
+
 🚀 Features
 
 Upload food images through a web interface
@@ -35,6 +36,7 @@ HTML5
 
 CSS3
 
+
 📂 Project Structure
 NutriScanIndia/
 │
@@ -50,6 +52,7 @@ NutriScanIndia/
 ├── app.py                   # Main Flask application
 └── README.md
 
+
 ⚙️ Installation and Setup
 Step 1: Clone the Repository
 git clone https://github.com/your-username/NutriScanIndia.git
@@ -63,6 +66,7 @@ Step 4: Run the Application
 python app.py
 Step 5: Open in Browser
 http://127.0.0.1:5000
+
 
 🧠 Model Details
 
