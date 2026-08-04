@@ -49,6 +49,7 @@ NutriScanIndia/
 ├── food_data.json           # Food category details
 ├── app.py                   # Main Flask application
 └── README.md
+
 ⚙️ Installation and Setup
 Step 1: Clone the Repository
 git clone https://github.com/your-username/NutriScanIndia.git
@@ -62,6 +63,7 @@ Step 4: Run the Application
 python app.py
 Step 5: Open in Browser
 http://127.0.0.1:5000
+
 🧠 Model Details
 
 Model Type: Convolutional Neural Network (CNN)
@@ -74,6 +76,7 @@ Loss Function: Sparse Categorical Crossentropy
 
 Output: Multi-class food classification
 
+
 🖥️ How the Application Works
 
 The user uploads a food image.
@@ -84,9 +87,11 @@ The trained CNN model analyzes the image.
 
 The predicted food category and confidence score are displayed on the screen.
 
+
 🎯 Project Objective
 
 The goal of NutriScan India is to demonstrate how Artificial Intelligence can be applied to food recognition systems. It combines deep learning and web technologies to create an interactive and practical AI solution.
+
 
 🔮 Future Improvements
 
@@ -99,6 +104,7 @@ Improve accuracy using transfer learning models
 Add mobile-friendly UI
 
 Integrate live camera capture functionality
+
 
 👩‍💻 Author
 
